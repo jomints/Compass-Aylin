@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pala ✈️ Frechen</title>
+    <style>
+        body, html {
+            height: 100%; margin: 0; font-family: 'Georgia', serif;
+            background: #121212; color: white; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .screen { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; transition: 0.8s ease-in-out; }
+        .hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+
+        /* Compass */
+        .compass-outer {
+            width: 260px; height: 260px; border: 4px solid #ff4d6d; border-radius: 50%;
+            position: relative; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px rgba(255, 77, 109, 0.3); background: rgba(255,255,255,0.02);
+        }
+        .needle {
+            width: 8px; height: 120px; background: linear-gradient(to bottom, #ff4d6d 50%, #444 50%);
+            border-radius: 10px; transform-origin: center; transition: transform 0.3s ease-out;
+            z-index: 5;
+        }
+        .label { position: absolute; font-weight: bold; color: #ff4d6d; font-size: 0.7rem; letter-spacing: 1px; }
+        .n { top: 15px; } .s { bottom: 15px; } .e { right: 15px; } .w { left: 15px; }
+
+        /* Flight Stage */
+        .map-area {
+            width: 85%; height: 350px; position: relative;
+            background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px dashed #ff4d6d;
+            overflow: hidden;
+        }
+        .city-tag { position: absolute; padding: 5px 10px; background: #ff4d6d; border-radius: 10px; font-size: 0.8rem; }
+        #tag-pala { bottom: 20px; left: 20px; }
+        #tag-frechen { top: 20px; right: 20px; }
+        
+        .plane {
+            position: absolute; font-size: 2.5rem;
+            left: 20px; bottom: 20px;
+            transition: all 4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            z-index: 10;
+        }
+
+        button {
+            padding: 15px 35px; border-radius: 50px; border: none;
+            background: #ff4d6d; color: white; font-weight: bold;
+            cursor: pointer; margin-top: 30px; font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+        #dist-val { font-size: 1.4rem; color: #ff4d6d; font-weight: bold; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="screen1" class="screen">
+        <div id="dist-val">Locating Jomin...</div>
+        <div class="compass-outer">
+            <div class="label n">AYLIN'S WORLD</div>
+            <div class="label s">PALA</div>
+            <div class="label e">EAST</div>
+            <div class="label w">WEST</div>
+            <div id="needle" class="needle"></div>
+        </div>
+        <p style="color: #888; margin-top: 15px; font-size: 0.9rem;">The needle points to my heart in Pala</p>
+        <button onclick="startFlight()">Do you want to meet me? ❤️</button>
+    </div>
+
+    <div id="screen2" class="screen hidden">
+        <h1 id="flight-status">Preparing for takeoff...</h1>
+        <div class="map-area">
+            <div id="tag-pala" class="city-tag">📍 Pala</div>
+            <div id="tag-frechen" class="city-tag">📍 Frechen</div>
+            <div id="plane" class="plane">✈️</div>
+        </div>
+        <button id="backBtn" class="hidden" onclick="resetAll()">Return to Compass</button>
+    </div>
+
+    <script>
+        // Coordinates for Pala, Kerala
+        const palaLat = 9.7112;
+        const palaLon = 76.6859;
+
+        // Compass Logic
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                // Distance calculation
+                const R = 6371;
+                const dLat = (palaLat - lat) * Math.PI / 180;
+                const dLon = (palaLon - lon) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                          Math.cos(lat * Math.PI / 180) * Math.cos(palaLat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                const distance = Math.round(R * c);
+
+                document.getElementById('dist-val').innerText = distance + " KM TO PALA";
+
+                // Bearing (Direction)
+                const y = Math.sin(dLon) * Math.cos(palaLat * Math.PI / 180);
+                const x = Math.cos(lat * Math.PI / 180) * Math.sin(palaLat * Math.PI / 180) -
+                          Math.sin(lat * Math.PI / 180) * Math.cos(palaLat * Math.PI / 180) * Math.cos(dLon);
+                let brng = Math.atan2(y, x) * 180 / Math.PI;
+                document.getElementById('needle').style.transform = `rotate(${brng}deg)`;
+            });
+        }
+
+        function startFlight() {
+            document.getElementById('screen1').classList.add('hidden');
+            document.getElementById('screen2').classList.remove('hidden');
+            
+            const plane = document.getElementById('plane');
+            const status = document.getElementById('flight-status');
+            const backBtn = document.getElementById('backBtn');
+
+            setTimeout(() => {
+                status.innerText = "Flying to Frechen...";
+                plane.style.left = "calc(100% - 70px)";
+                plane.style.bottom = "calc(100% - 70px)";
+                plane.style.transform = "rotate(-45deg) scale(1.2)";
+            }, 800);
+
+            setTimeout(() => {
+                status.innerText = "I have arrived! ❤️";
+                backBtn.classList.remove('hidden');
+            }, 5000);
+        }
+
+        function resetAll() {
+            location.reload(); // Simplest way to reset the journey
+        }
+    </script>
+</body>
+</html>
