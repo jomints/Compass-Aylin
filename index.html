@@ -3,84 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pala ✈️ Frechen</title>
+    <title>Pala ✈️ Frechen | Jomin & Aylin</title>
     <style>
+        :root {
+            --romantic-pink: #ff4d6d;
+            --soft-bg: #fff0f3;
+        }
+
         body, html {
             height: 100%; margin: 0; font-family: 'Georgia', serif;
-            background: #0f172a; color: white; overflow: hidden;
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
         }
-        .screen { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; transition: 0.8s ease-in-out; }
-        .hidden { opacity: 0; pointer-events: none; transform: scale(0.9); }
+
+        .screen { 
+            width: 100%; height: 100%; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: absolute; transition: 1s ease-in-out; 
+        }
+
+        .hidden { opacity: 0; pointer-events: none; transform: translateY(50px); }
+
+        /* Floating Hearts Animation */
+        .hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .heart { position: absolute; color: rgba(255, 255, 255, 0.4); animation: float 6s infinite ease-in; font-size: 1.5rem; }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
 
         /* Compass Section */
         .compass-outer {
-            width: 260px; height: 260px; border: 4px solid #ff4d6d; border-radius: 50%;
+            width: 250px; height: 250px; 
+            border: 6px solid white; border-radius: 50%;
             position: relative; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 40px rgba(255, 77, 109, 0.2); background: rgba(255,255,255,0.02);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            z-index: 2;
         }
         .needle {
-            width: 8px; height: 120px; background: linear-gradient(to bottom, #ff4d6d 50%, #444 50%);
-            border-radius: 10px; transform-origin: center; transition: transform 0.3s ease-out;
+            width: 10px; height: 120px; 
+            background: linear-gradient(to bottom, #ff4d6d 50%, #ffffff 50%);
+            border-radius: 20px; transform-origin: center; transition: transform 0.3s;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
-        .label { position: absolute; font-weight: bold; color: #ff4d6d; font-size: 0.7rem; }
-        .n { top: 15px; } .s { bottom: 15px; }
 
-        /* World Map Section */
+        /* Map Section */
         .map-container {
-            width: 95%; max-width: 600px; height: 350px; position: relative;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg');
-            background-size: cover; background-position: center;
-            border-radius: 15px; border: 1px solid #334155; overflow: hidden;
-            background-color: #1e293b;
+            width: 95%; max-width: 600px; height: 320px; position: relative;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg') center/contain no-repeat;
+            background-color: rgba(255, 255, 255, 0.9); 
+            border-radius: 20px; border: 4px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
         
-        .marker { position: absolute; font-size: 1.5rem; z-index: 5; }
-        #india-mark { bottom: 30%; right: 28%; } /* Approx Kerala */
-        #germany-mark { top: 25%; left: 45%; } /* Approx Germany */
+        .marker { position: absolute; font-size: 1.5rem; transform: translate(-50%, -50%); z-index: 5; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3)); }
+        
+        /* Specific Points */
+        #india-mark { bottom: 33%; left: 73%; color: #ff4d6d; } 
+        #germany-mark { top: 25%; left: 49%; color: #ff4d6d; } 
 
         .plane {
-            position: absolute; font-size: 2rem; z-index: 10;
-            bottom: 30%; right: 28%;
+            position: absolute; font-size: 2.5rem; z-index: 10;
+            bottom: 33%; left: 73%;
             transition: all 5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
-            filter: drop-shadow(0 0 10px #ff4d6d);
+            transform: translate(-50%, -50%) rotate(-45deg);
         }
 
         button {
-            padding: 15px 35px; border-radius: 50px; border: none;
-            background: #ff4d6d; color: white; font-weight: bold;
-            cursor: pointer; margin-top: 30px; font-size: 1rem;
-            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            padding: 18px 40px; border-radius: 50px; border: none;
+            background: white; color: #ff4d6d; font-weight: bold;
+            cursor: pointer; margin-top: 30px; font-size: 1.1rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: 0.3s; z-index: 2;
         }
-        #dist-val { font-size: 1.4rem; color: #ff4d6d; font-weight: bold; margin-bottom: 20px; }
+        button:hover { transform: scale(1.05); background: #fff0f3; }
+
+        #dist-val { font-size: 1.6rem; color: white; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); z-index: 2; }
+        h1 { text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
+    <div class="hearts" id="heartsContainer"></div>
+
     <div id="screen1" class="screen">
-        <div id="dist-val">Locating Jomin...</div>
+        <div id="dist-val">Connecting to my Heart...</div>
         <div class="compass-outer">
-            <div class="label n">AYLIN'S WORLD</div>
-            <div class="label s">PALA</div>
             <div id="needle" class="needle"></div>
+            <div style="position: absolute; color: white; font-weight: bold; top: 15px;">AYLIN</div>
+            <div style="position: absolute; color: white; font-weight: bold; bottom: 15px;">PALA</div>
         </div>
         <button onclick="startFlight()">Do you want to meet me? ❤️</button>
     </div>
 
     <div id="screen2" class="screen hidden">
-        <h1 id="status-text">Departure: Pala, Kerala</h1>
+        <h1 id="status-text" style="color: white; margin-bottom: 20px;">Departure: Pala, Kerala...</h1>
         <div class="map-container">
-            <div id="india-mark" class="marker">🇮🇳</div>
-            <div id="germany-mark" class="marker">🇩🇪</div>
+            <div id="india-mark" class="marker">📍</div>
+            <div id="germany-mark" class="marker">📍</div>
             <div id="plane" class="plane">✈️</div>
         </div>
-        <button id="backBtn" class="hidden" onclick="location.reload()">Return to Compass</button>
+        <button id="backBtn" class="hidden" onclick="location.reload()">Back to Home</button>
     </div>
 
     <script>
+        // Create random floating hearts
+        const container = document.getElementById('heartsContainer');
+        for (let i = 0; i < 15; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            heart.style.fontSize = (Math.random() * 1 + 1) + 'rem';
+            container.appendChild(heart);
+        }
+
         const palaLat = 9.7112, palaLon = 76.6859;
 
-        // Compass & Distance
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(pos => {
                 const lat = pos.coords.latitude, lon = pos.coords.longitude;
@@ -104,15 +147,14 @@
             const status = document.getElementById('status-text');
 
             setTimeout(() => {
-                status.innerText = "Flying across the world...";
-                // Animated path to Germany coordinates on map
-                plane.style.bottom = "65%";
-                plane.style.right = "50%";
-                plane.style.transform = "rotate(-120deg) scale(1.5)";
+                status.innerText = "Flying across the miles for you...";
+                plane.style.bottom = "75%"; 
+                plane.style.left = "49%";   
+                plane.style.transform = "translate(-50%, -50%) rotate(-110deg) scale(1.4)";
             }, 1000);
 
             setTimeout(() => {
-                status.innerText = "Arrived in Frechen! ❤️";
+                status.innerText = "I have arrived! I love you! ❤️";
                 document.getElementById('backBtn').classList.remove('hidden');
             }, 6000);
         }
